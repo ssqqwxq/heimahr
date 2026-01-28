@@ -25,9 +25,9 @@
             <el-button style="width: 350px;"
                        type="primary"
                        @click="login">登录</el-button>
-            <el-button style="width: 350px; margin-top: 10px;"
+            <!-- <el-button style="width: 350px; margin-top: 10px;"
                        type="text"
-                       @click="text">text</el-button>
+                       @click="text">text</el-button> -->
           </el-form-item>
         </el-form>
       </el-card>
@@ -92,16 +92,16 @@ export default {
         }
       })
     },
-    text() {
-      request({
-        url: '/sys/login',
-        method: 'post',
-        data: {
-          mobile: '13800000002',
-          password: 'itHeiMa@20260128'
-        }
-      })
-    }
+    // text() {
+    //   request({
+    //     url: '/sys/login',
+    //     method: 'post',
+    //     data: {
+    //       mobile: '13800000002',
+    //       password: 'itHeiMa@20260128'
+    //     }
+    //   })
+    // }
   }
 }
 </script>
