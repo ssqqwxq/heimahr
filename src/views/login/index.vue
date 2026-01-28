@@ -76,7 +76,11 @@ export default {
       }
     }
   },
+  created() {
+    alert(process.env.NODE_ENV) // 输出当前的环境：development 或 production
+  },
   methods: {
+
     login() {
       this.$refs.form.validate((isok) => {
         if (isok) {
