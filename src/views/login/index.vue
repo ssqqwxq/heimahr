@@ -25,6 +25,9 @@
             <el-button style="width: 350px;"
                        type="primary"
                        @click="login">登录</el-button>
+            <el-button style="width: 350px; margin-top: 10px;"
+                       type="text"
+                       @click="text">text</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -32,7 +35,8 @@
   </div>
 </template>
 <script>
-
+import axios from 'axios'
+import request from '@/utils/request'
 export default {
   name: "Login",
   data() {
@@ -80,6 +84,17 @@ export default {
             message: '校验通过',
             type: 'success'
           });
+          this.$store.dispatch('user/login', this.loginForm)
+        }
+      })
+    },
+    text() {
+      request({
+        url: '/sys/login',
+        method: 'post',
+        data: {
+          mobile: '13800000002',
+          password: 'itHeiMa@20260128'
         }
       })
     }
