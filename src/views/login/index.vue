@@ -84,10 +84,7 @@ export default {
     login() {
       this.$refs.form.validate((isok) => {
         if (isok) {
-          this.$message({
-            message: '校验通过',
-            type: 'success'
-          });
+          alert('校验通过')
           this.$store.dispatch('user/login', this.loginForm)
         }
       })
