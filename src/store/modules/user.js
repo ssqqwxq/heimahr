@@ -1,6 +1,7 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { login } from '@/api/user'
 import { UserInfo } from '@/api/user'
+import router from '@/router'
 
 const state = {
   token: getToken(), // 从缓存中读取默认token
@@ -33,6 +34,10 @@ const actions = {
     const res = await UserInfo()
     // console.log(res)
     context.commit('setUserInfo', res)
+  },
+  logout(context) {
+    context.commit('setUserInfo', {}) //清理用户信息
+    context.commit('delToken') //清理token
   }
 }
 

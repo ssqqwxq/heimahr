@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '@/store'
 import { Message } from 'element-ui'
+import router from '@/router'
 
 const service = axios.create({
   // Vue代码中NODE_ENV之外，所有的变量必须以VUE_APP_开头
@@ -35,6 +36,14 @@ service.interceptors.response.use((response) => {
   }
 },
   (error) => {
+    // debugger
+    if (error.response.status === 401) {
+      Message({ type: 'error', message: 'token过期,请重新登录' })
+      // token过期
+      store.dispatch('user/logout')
+      router.push('/login') //跳转到登录页
+      return Promise.reject(error)
+    }
     Message({ type: 'error', message: error.message })
     return Promise.reject(error)
   })
