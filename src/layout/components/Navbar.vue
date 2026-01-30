@@ -11,8 +11,12 @@
                    trigger="click">
         <div class="avatar-wrapper">
           <!-- 头像 -->
-          <img :src="avatar"
+          <img v-if="avatar"
+               :src="avatar"
                class="user-avatar">
+          <!-- 没有头像信息就默认显示用户名首字母(?若没有名字就不往下进行charAt方法) -->
+          <span v-else
+                class="username">{{ name?.charAt(0) }}</span>
           <!-- 名称 -->
           <span class="name">{{ name }}</span>
           <!-- 图标 -->
@@ -136,6 +140,16 @@ export default {
         .name {
           margin-right: 10px;
           font-size: 13px;
+        }
+
+        .username {
+          width: 30px;
+          height: 30px;
+          background-color: #409eff;
+          color: #fff;
+          text-align: center;
+          line-height: 30px;
+          border-radius: 50%;
         }
 
         .user-avatar {
