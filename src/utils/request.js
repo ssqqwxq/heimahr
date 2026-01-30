@@ -4,7 +4,7 @@ import { Message } from 'element-ui'
 
 const service = axios.create({
   // Vue代码中NODE_ENV之外，所有的变量必须以VUE_APP_开头
-  baseURL: process.env.VUE_APP_BASE_API, //( /api )页面请求地址会加上这个前缀 如 /api/sys/login
+  baseURL: process.env.VUE_APP_BASE_API, //( '/api' )页面请求地址会加上这个前缀 如 /api/sys/login
   timeout: 10000 //请求超时时间
 })
 

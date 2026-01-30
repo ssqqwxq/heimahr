@@ -16,7 +16,7 @@
           <el-form-item prop="password">
             <el-input v-model="loginForm.password"
                       placeholder="请输入密码"
-                      type="password" />
+                      type="text" />
           </el-form-item>
           <el-form-item prop="isAgree">
             <el-checkbox v-model="loginForm.isAgree">用户平台使用协议</el-checkbox>

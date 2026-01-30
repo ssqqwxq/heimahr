@@ -1,7 +1,10 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { login } from '@/api/user'
+import { UserInfo } from '@/api/user'
+
 const state = {
-  token: getToken() // 从缓存中读取默认token
+  token: getToken(), // 从缓存中读取默认token
+  userInfo: '' // 用户基本信息
 }
 
 const mutations = {
@@ -13,6 +16,9 @@ const mutations = {
   delToken(state) {
     state.token = null
     removeToken()
+  },
+  setUserInfo(state, userinfoRes) {
+    state.userInfo = userinfoRes
   }
 }
 
@@ -22,6 +28,11 @@ const actions = {
     const token = await login(data)
     // 模拟登录成功 获得了token是123456，设置token
     context.commit('setToken', token)
+  },
+  async getUserInfo(context) {
+    const res = await UserInfo()
+    // console.log(res)
+    context.commit('setUserInfo', res)
   }
 }
 

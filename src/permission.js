@@ -3,7 +3,10 @@ import store from '@/store'
 import nprogress from 'nprogress' // 进度条
 import 'nprogress/nprogress.css'
 
-whiteList = ['/login', '/404'] // 白名单
+// 有token => 去登录页拦截到首页 =>有token不去登录页放行
+// 无token => 去的地址在白名单里面放行 => 去的地址不在白名单里面拦截到登录页
+// next（地址） 有地址它不会执行后置守卫的关闭进度条 需手动关闭
+const whiteList = ['/login', '/404'] // 白名单
 // 路由前置守卫
 router.beforeEach((to, from, next) => {
   nprogress.start()
@@ -34,6 +37,6 @@ router.beforeEach((to, from, next) => {
 
 // 路由后置守卫
 router.afterEach(() => {
-  nprogress.done()
+  nprogress.done()//关闭进度条
 
 })

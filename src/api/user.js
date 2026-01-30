@@ -15,3 +15,11 @@ export function login(data) {
 //   )
 // }
 
+// 获取用户信息
+export function UserInfo() {
+  return request({
+    url: '/sys/profile',
+    method: 'get',
+  })
+}
+
