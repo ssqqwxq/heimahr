@@ -16,14 +16,13 @@ import { Icon } from 'element-ui';
 import { mapGetters } from 'vuex'
 
 
+
 export default {
   name: 'Dashboard',
-  created() {
-    this.getDepartment()
-  },
+
   data() {
     return {
-
+      arr: []
     }
   },
   methods: {

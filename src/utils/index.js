@@ -45,7 +45,7 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -115,3 +115,72 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 递归算法 处理列表转化树形结构
+export function transListToTreeData(list, rootValue) {
+  const arr = []
+  list.forEach(item => {
+    // 找到 pid === 0 的 '传智教育'
+    if (item.pid === rootValue) {
+      // 当前节点的id 和 当前子节点的pid相等
+      const children = transListToTreeData(list, item.id) // 这次传item.id是1 找pid===1的就是要做子节点
+      // 给原本无children的item，动态新增children属性，赋值子节点数组
+      // 当前子节点赋值给节点（子节点是pid=1的人事部，给‘传智教育’）
+      item.children = children
+      arr.push(item)
+    }
+  })
+  return arr
+}
+// 原始数据
+// "data": [
+//   {
+//     "id": 1,
+//     "pid": 0,
+//     "name": "传智教育",
+//     "code": "CZJY",
+//     "managerId": 1,
+//     "managerName": "管理员",
+//     "introduce": "总部",
+//     "createTime": "2022-10-26 09:13:37"
+//   },
+//   {
+//     "id": 4,
+//     "pid": 1,
+//     "name": "人事部",
+//     "code": "RSB",
+//     "managerId": 8,
+//     "managerName": "黑马周乐天",
+//     "introduce": "人事部",
+//     "createTime": "2022-10-26 09:13:42"
+//   },
+//   {
+//     "id": 5,
+//     "pid": 1,
+//     "name": "财务部",
+//     "code": "CWB",
+//     "managerId": 5,
+//     "managerName": "黑马巴思慧",
+//     "introduce": "财务部",
+//     "createTime": "2022-10-26 09:13:40"
+//   },],
+
+// 转换的数据
+// "data": [
+//   {
+//     "id": 1,
+//     "pid": 0,
+//     "name": "传智教育",
+//     "children": [{
+//       "id": 4,
+//       "pid": 1,
+//       "name": "人事部",
+//       'children': [{
+//         "id": 5,
+//         "pid": 1,
+//         "name": "财务部",
+//       }]
+//     }]
+//   }]
+
+

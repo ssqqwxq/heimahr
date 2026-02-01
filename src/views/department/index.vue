@@ -43,6 +43,7 @@
 import { Icon } from 'element-ui';
 
 import { getDepartmentApi } from '@/api/department'
+import { transListToTreeData } from '@/utils'
 
 export default {
     name: 'department',
@@ -61,7 +62,7 @@ export default {
     methods: {
         async getDepartment() {
             const res = await getDepartmentApi()
-            this.depts = res
+            this.depts = transListToTreeData(res, 0)
             console.log(this.depts);
         }
     },
