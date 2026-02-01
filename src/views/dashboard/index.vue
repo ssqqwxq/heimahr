@@ -7,10 +7,7 @@
     <!-- <svg-icon icon-class="eye"></svg-icon>
     <svg-icon icon-class="wechat"></svg-icon> -->
 
-    <el-tree :data="depts"
-             :props="defaultProps"
-             @node-click="handleNodeClick"
-             default-expand-all></el-tree>
+
   </div>
 </template>
 
@@ -18,27 +15,19 @@
 import { Icon } from 'element-ui';
 import { mapGetters } from 'vuex'
 
+
 export default {
   name: 'Dashboard',
+  created() {
+    this.getDepartment()
+  },
   data() {
     return {
-      depts: [{
-        label: '一级',
-        children: [{
-          label: '二级1-1',
-          children: [{
-            label: '三级1-3'
-          }],
-        }]
-      },
-      { label: '二级' }
-      ],
 
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
     }
+  },
+  methods: {
+
   },
   computed: {
     ...mapGetters([
@@ -55,11 +44,24 @@ export default {
 .dashboard {
   &-container {
     margin: 30px;
+
+  }
+
+  &.row {
+    border: 1px solid blue;
   }
 
   &-text {
     font-size: 30px;
     line-height: 46px;
   }
+
+
+}
+
+.tree-manager {
+  width: 50px;
+  display: inline-block;
+  margin: 10px;
 }
 </style>
