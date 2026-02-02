@@ -24,8 +24,9 @@
                     <el-col>{{ data.name }}</el-col>
                     <el-col :span="4">
                         <span class="tree-manager">{{ data.managerName }}</span>
-                        <!-- 下拉菜单区域 -->
-                        <el-dropdown @command="operateDept">
+                        <!-- 下拉菜单区域  -->
+                        <!-- $event 是指传递默认的command='add/edit/del'参数 data.id是指你点的是谁的操作按钮的id  -->
+                        <el-dropdown @command="operateDept($event, data.id)">
                             <span class="el-dropdown-link">
                                 操作<i class="el-icon-arrow-down el-icon--right" />
                             </span>
@@ -42,7 +43,11 @@
         </el-tree>
         <!-- 操作 弹层 -->
         <!-- sync 是语法糖 把原本的 @update:showDialog="showDialog = $event"监听子组件派发的update:update:showDialog事件，直接把事件参数赋值给父组件简写了 -->
-        <addDialog :showDialog.sync="showDialog"></addDialog>
+        <addDialog :showDialog.sync="showDialog"
+                   :current_NodeId="currentNodeId"
+                   @updateList=getDepartment></addDialog>
+        <!-- :current_NodeId="currentNodeId" 是指把你点击的比如'传智教育'的id传给子组件
+         因树结构id=pid所以根据id能明白点的是不是某个父项的子项-->
     </div>
 </template>
 
@@ -60,6 +65,7 @@ export default {
     },
     data() {
         return {
+            currentNodeId: null, // 存储当前点击的id
             showDialog: false,  // 操作 弹层
             depts: [],
             defaultProps: {
@@ -69,16 +75,19 @@ export default {
         }
     },
     methods: {
+        // 获取部门信息
         async getDepartment() {
             const res = await getDepartmentApi()
             this.depts = transListToTreeData(res, 0)
             console.log(this.depts);
         },
         // 点击 操作菜单触发的函数
-        operateDept(type) {
+        operateDept(type, id) {
             if (type === 'add') {
                 this.showDialog = true
+                this.currentNodeId = id
             }
+            // console.log(type, id);
         }
     },
     computed: {

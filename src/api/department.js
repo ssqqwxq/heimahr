@@ -12,3 +12,12 @@ export function getManagerListApi() {
         url: '/sys/user/simple'
     })
 }
+
+// 新增部门
+export function addDepartmentApi(data) {
+    return request({
+        url: '/company/department',
+        method: 'post',
+        data
+    })
+}

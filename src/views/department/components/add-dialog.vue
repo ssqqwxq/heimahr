@@ -2,7 +2,8 @@
     <el-dialog title="新增部门"
                :visible="showDialog"
                @close="close">
-        <el-form :model="formData"
+        <el-form ref="formRef"
+                 :model="formData"
                  :rules="rules"
                  label-width="120px">
             <el-form-item prop="name"
@@ -48,7 +49,8 @@
                         justify="center">
                     <el-col :span="12">
                         <el-button size="mini"
-                                   type="primary">确定</el-button>
+                                   type="primary"
+                                   @click="btnOk">确定</el-button>
                         <el-button size="mini">取消</el-button>
                     </el-col>
                 </el-row>
@@ -57,11 +59,14 @@
     </el-dialog>
 </template>
 <script>
-import { getDepartmentApi, getManagerListApi } from '@/api/department'
+import { getDepartmentApi, getManagerListApi, addDepartmentApi } from '@/api/department'
 export default {
     props: {
         showDialog: {
             type: Boolean
+        },
+        current_NodeId: {
+            type: [Number, String], // pid的值
         }
     },
     created() {
@@ -125,10 +130,21 @@ export default {
     methods: {
         close() {
             this.$emit('update:showDialog', false)
+            this.$refs.formRef.resetFields() //重置表单数据
         },
         async getManagerList() {
             const res = await getManagerListApi()
             this.managerList = res
+        },
+        btnOk() {
+            this.$refs.formRef.validate(async isOk => {
+                if (isOk) {
+                    await addDepartmentApi({ ...this.formData, pid: this.current_NodeId })
+                    this.$emit('updateList')
+                    this.$message.success('添加成功')
+                    this.close()
+                }
+            })
         }
     }
 }
