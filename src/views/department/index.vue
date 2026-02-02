@@ -10,7 +10,10 @@
         <!-- 展示树结构 -->
         <el-tree :data="depts"
                  :props="defaultProps"
-                 default-expand-all>
+                 default-expand-all
+                 :expand-on-click-node="false">
+            <!--  ↑↑↑如果为 false，则只有点箭头图标的时候才会展开或者收缩节点。 -->
+
             <!-- 节点结构 -->
             <!--自定义节点内容 插槽获取到  v-slot="{ data,和 node }" -->
             <template v-slot="{ data }">
@@ -21,10 +24,11 @@
                     <el-col>{{ data.name }}</el-col>
                     <el-col :span="4">
                         <span class="tree-manager">{{ data.managerName }}</span>
-                        <!-- $event 实参 表示类型 -->
-                        <el-dropdown>
-                            <!-- 显示区域内容 -->
-                            <span class="el-dropdown-link">操作<i class="el-icon-arrow-down el-icon--right" /></span>
+                        <!-- 下拉菜单区域 -->
+                        <el-dropdown @command="operateDept">
+                            <span class="el-dropdown-link">
+                                操作<i class="el-icon-arrow-down el-icon--right" />
+                            </span>
                             <!-- 下拉菜单选项 -->
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item command="add">添加子部门</el-dropdown-item>
@@ -36,6 +40,9 @@
                 </el-row>
             </template>
         </el-tree>
+        <!-- 操作 弹层 -->
+        <!-- sync 是语法糖 把原本的 @update:showDialog="showDialog = $event"监听子组件派发的update:update:showDialog事件，直接把事件参数赋值给父组件简写了 -->
+        <addDialog :showDialog.sync="showDialog"></addDialog>
     </div>
 </template>
 
@@ -44,6 +51,7 @@ import { Icon } from 'element-ui';
 
 import { getDepartmentApi } from '@/api/department'
 import { transListToTreeData } from '@/utils'
+import addDialog from './components/add-dialog.vue';
 
 export default {
     name: 'department',
@@ -52,6 +60,7 @@ export default {
     },
     data() {
         return {
+            showDialog: false,  // 操作 弹层
             depts: [],
             defaultProps: {
                 children: 'children', //读取子节点字段名
@@ -64,11 +73,18 @@ export default {
             const res = await getDepartmentApi()
             this.depts = transListToTreeData(res, 0)
             console.log(this.depts);
+        },
+        // 点击 操作菜单触发的函数
+        operateDept(type) {
+            if (type === 'add') {
+                this.showDialog = true
+            }
         }
     },
     computed: {
 
     },
+    components: { addDialog }
 }
 </script>
 
@@ -91,9 +107,11 @@ export default {
 
 }
 
+
+
 .tree-manager {
-    width: 50px;
+    width: 70px;
     display: inline-block;
-    margin: 60px;
+    margin: 30px;
 }
 </style>

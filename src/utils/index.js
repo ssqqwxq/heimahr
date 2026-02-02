@@ -132,6 +132,56 @@ export function transListToTreeData(list, rootValue) {
   })
   return arr
 }
+// 1. 找到原始 item（未加工，无树形结构）
+//遍历数组匹配pid === rootValue(0)时，拿到的原始item是扁平的，只有自身属性，没有子节点：
+// 原始item：扁平数据，无children
+//item = { id: 1, name: '传智教育', pid: 0 }
+
+// 2. 递归查找并挂载子节点（核心加工步骤）
+// 执行const children = transListToTreeData(list, item.id)，递归调用会把 item.id=1 作为新的 rootValue，
+// 找到所有pid=1的子节点（比如人事部、技术部），并对这些子节点做同样的加工（给它们也挂载各自的子节点），最终返回加工好的子节点树形数组：
+// 递归返回的children：已是加工好的树形子节点数组
+// children = [
+//   { id:2, name:'人事部', pid:1, children:[] }, // 人事部无子节点，children为空数组
+//   { id:3, name:'技术部', pid:1, children: [     // 技术部有子节点，children嵌套树形
+//     { id:4, name:'前端组', pid:3, children:[] },
+//     { id:5, name:'Java组', pid:3, children:[] }
+//   ]}
+// ]
+
+// 3. 给 item 挂载 children（加工完成，item 成为树形节点）
+// 执行item.children = children后，原始扁平的 item 被挂载了嵌套的 children 属性
+// ，此时的item已经是单个完整的树形节点，自身携带了所有子孙节点的嵌套结构：
+// 加工后的item：单个树形节点，已实现树形结构
+// item = {
+//   id: 1,
+//   name: '传智教育',
+//   pid: 0,
+//   children: [ // 嵌套子节点，子节点也有自己的children，树形结构成型
+//     { id:2, name:'人事部', pid:1, children:[] },
+//     { id:3, name:'技术部', pid:1, children: [
+//           { id:4, name:'前端组', pid:3, children:[] },
+//           { id:5, name:'Java组', pid:3, children:[] }
+//     ]}
+//   ]
+// }
+
+//4. arr.push (item)：收集加工好的树形节点
+//此时把这个树形 item推入 arr，arr 就成了「树形节点的收集容器」，后续 return arr 就能得到完整的树形结构数组。
+
+
+// item = {
+//   id: 1,
+//   name: '传智教育',
+//   pid: 0,
+//   children: [ // 嵌套子节点，子节点也有自己的children，树形结构成型
+//     { id:2, name:'人事部', pid:1, children:[] },
+//     { id:3, name:'技术部', pid:1, children: [
+//       { id:4, name:'前端组', pid:3, children:[] },
+//       { id:5, name:'Java组', pid:3, children:[] }
+//     ]}
+//   ]
+// }
 // 原始数据
 // "data": [
 //   {
