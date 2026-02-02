@@ -25,6 +25,12 @@
                            placeholder="请选择负责人"
                            style="width: 80%"
                            size="mini">
+                    <!-- label 显示字段 value 存储字段  -->
+                    <el-option v-for="item in managerList"
+                               :key="item.id"
+                               :label="item.username"
+                               :value="item.id">
+                    </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item prop="introduce"
@@ -51,15 +57,19 @@
     </el-dialog>
 </template>
 <script>
-import { getDepartmentApi } from '@/api/department'
+import { getDepartmentApi, getManagerListApi } from '@/api/department'
 export default {
     props: {
         showDialog: {
             type: Boolean
         }
     },
+    created() {
+        this.getManagerList()
+    },
     data() {
         return {
+            managerList: [], // 存储负责人列表
             formData: {
                 code: '',//部门编码
                 introduce: '',//部门介绍
@@ -115,6 +125,10 @@ export default {
     methods: {
         close() {
             this.$emit('update:showDialog', false)
+        },
+        async getManagerList() {
+            const res = await getManagerListApi()
+            this.managerList = res
         }
     }
 }

@@ -6,3 +6,9 @@ export function getDepartmentApi() {
         url: '/company/department'
     })
 }
+// 获取部门负责人信息
+export function getManagerListApi() {
+    return request({
+        url: '/sys/user/simple'
+    })
+}
