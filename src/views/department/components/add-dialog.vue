@@ -51,7 +51,8 @@
                         <el-button size="mini"
                                    type="primary"
                                    @click="btnOk">确定</el-button>
-                        <el-button size="mini">取消</el-button>
+                        <el-button @click="close"
+                                   size="mini">取消</el-button>
                     </el-col>
                 </el-row>
             </el-form-item>
@@ -59,7 +60,7 @@
     </el-dialog>
 </template>
 <script>
-import { getDepartmentApi, getManagerListApi, addDepartmentApi } from '@/api/department'
+import { getDepartmentApi, getManagerListApi, addDepartmentApi, getDepartmentDetailApi } from '@/api/department'
 export default {
     props: {
         showDialog: {
@@ -91,8 +92,14 @@ export default {
                 // 自定义校验规则 输入的不能跟 已有的数据重复
                 {
                     trigger: 'blur',
+
                     validator: async (rule, value, callback) => {
-                        const res = await getDepartmentApi()
+                        let res = await getDepartmentApi()
+                        // 判断是不是编辑场景 编辑场景有id
+                        if (this.formData.id) {
+                            // 编辑场景 排除自身(因为点的是编辑那么这数据就一定存在，把这项排除检查其他项是否重复)
+                            res = res.filter(item => item.id !== this.formData.id)
+                        }
                         if (res.some(item => item.code === value)) {
                             callback(new Error('已有此编码'))
                         } else {
@@ -114,15 +121,22 @@ export default {
                 },
                 {
                     trigger: 'blur',
+
                     validator: async (rule, value, callback) => {
-                        const res = await getDepartmentApi()
+                        let res = await getDepartmentApi()
+                        // 判断是不是编辑场景 编辑场景有id
+                        if (this.formData.id) {
+                            res = res.filter(item => item.id !== this.formData.id)
+                        }
                         if (res.some(item => item.name === value)) {
                             callback(new Error('已有此名称'))
                         } else {
                             callback()
                         }
                     }
-                }]
+                }
+
+                ]
                 // pid: '' // 父级部门的id 不需要做校验
             }
         }
@@ -145,6 +159,12 @@ export default {
                     this.close()
                 }
             })
+        },
+        async getDepartmentDetail() {
+            // console.log('子组件接收到的current_NodeId：', this.current_NodeId); // 新增：看子组件实际拿到的id
+            const res = await getDepartmentDetailApi(this.current_NodeId)
+            this.formData = res
+            console.log(this.formData.id);
         }
     }
 }

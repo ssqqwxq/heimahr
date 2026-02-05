@@ -42,10 +42,12 @@
             </template>
         </el-tree>
         <!-- 操作 弹层 -->
-        <!-- sync 是语法糖 把原本的 @update:showDialog="showDialog = $event"监听子组件派发的update:update:showDialog事件，直接把事件参数赋值给父组件简写了 -->
-        <addDialog :showDialog.sync="showDialog"
+        <!-- sync 是语法糖 把原本的 @update:showDialog="showDialog = $event"监听子组件派发的update:showDialog事件，直接把事件参数赋值给父组件简写了 -->
+        <addDialog ref="addDept"
+                   :showDialog.sync="showDialog"
                    :current_NodeId="currentNodeId"
-                   @updateList=getDepartment></addDialog>
+                   @updateList=getDepartment>
+        </addDialog>
         <!-- :current_NodeId="currentNodeId" 是指把你点击的比如'传智教育'的id传给子组件
          因树结构id=pid所以根据id能明白点的是不是某个父项的子项-->
     </div>
@@ -83,11 +85,20 @@ export default {
         },
         // 点击 操作菜单触发的函数
         operateDept(type, id) {
+            // console.log('父组件点击的原始id：', id, typeof id); // 新增：看点击的真实id
             if (type === 'add') {
                 this.showDialog = true
                 this.currentNodeId = id
+                // console.log(type, id);
+            } else if (type == 'edit') {
+                this.showDialog = true
+                this.currentNodeId = id // 存储本次点击的id传给子
+                // console.log('父组件赋值给currentNodeId的id：', this.currentNodeId); // 新增：看赋值后的值
+                //nextTick(() => {}) 等Dom加载完成
+                this.$nextTick(() => {
+                    this.$refs.addDept.getDepartmentDetail() // this.$refs.addDept等同于子组件的this
+                })
             }
-            // console.log(type, id);
         }
     },
     computed: {

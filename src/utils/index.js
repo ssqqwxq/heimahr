@@ -132,6 +132,9 @@ export function transListToTreeData(list, rootValue) {
   })
   return arr
 }
+
+
+
 // 1. 找到原始 item（未加工，无树形结构）
 //遍历数组匹配pid === rootValue(0)时，拿到的原始item是扁平的，只有自身属性，没有子节点：
 // 原始item：扁平数据，无children
