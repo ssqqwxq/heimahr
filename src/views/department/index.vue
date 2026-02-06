@@ -56,7 +56,7 @@
 <script>
 import { Icon } from 'element-ui';
 
-import { getDepartmentApi } from '@/api/department'
+import { getDepartmentApi, delDepartmentApi } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import addDialog from './components/add-dialog.vue';
 
@@ -85,19 +85,41 @@ export default {
         },
         // 点击 操作菜单触发的函数
         operateDept(type, id) {
-            // console.log('父组件点击的原始id：', id, typeof id); // 新增：看点击的真实id
+            // 新增
             if (type === 'add') {
                 this.showDialog = true
                 this.currentNodeId = id
                 // console.log(type, id);
+                // 编辑
             } else if (type == 'edit') {
                 this.showDialog = true
                 this.currentNodeId = id // 存储本次点击的id传给子
-                // console.log('父组件赋值给currentNodeId的id：', this.currentNodeId); // 新增：看赋值后的值
                 //nextTick(() => {}) 等Dom加载完成
                 this.$nextTick(() => {
                     this.$refs.addDept.getDepartmentDetail() // this.$refs.addDept等同于子组件的this
                 })
+            } else {
+                this.$confirm('您确定要删除该信息么?', '提示', {
+                    cancelButtonText: '取消',
+                    confirmButtonText: '确定',
+                    type: 'warning'
+                })
+                    // 确认
+                    .then(async () => {
+                        await delDepartmentApi(id) // 删除操作
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        this.getDepartment() // 删除后重新刷新页面
+                    })
+                    // 取消
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
             }
         }
     },

@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="新增部门"
+    <el-dialog :title="(this.formData.id) ? '编辑部门' : '新增部门'"
                :visible="showDialog"
                @close="close">
         <el-form ref="formRef"
@@ -60,7 +60,7 @@
     </el-dialog>
 </template>
 <script>
-import { getDepartmentApi, getManagerListApi, addDepartmentApi, getDepartmentDetailApi } from '@/api/department'
+import { getDepartmentApi, getManagerListApi, addDepartmentApi, getDepartmentDetailApi, updateDepartmentApi } from '@/api/department'
 export default {
     props: {
         showDialog: {
@@ -144,7 +144,14 @@ export default {
     methods: {
         close() {
             this.$emit('update:showDialog', false)
-            this.$refs.formRef.resetFields() //重置表单数据
+            this.formData = {
+                code: '', // 部门编码
+                introduce: '', // 部门介绍
+                managerId: '', // 部门负责人id
+                name: '', // 部门名称
+                pid: '' // 父级部门的id
+            } // 手动重置数据  
+            this.$refs.formRef.resetFields() //重置在模板中绑定的数据 还能重置校验
         },
         async getManagerList() {
             const res = await getManagerListApi()
@@ -152,10 +159,19 @@ export default {
         },
         btnOk() {
             this.$refs.formRef.validate(async isOk => {
+                let msg = '新增'
                 if (isOk) {
-                    await addDepartmentApi({ ...this.formData, pid: this.current_NodeId })
+                    // 通过检验区分是 新增 还是 编辑 有id是编辑
+                    // 编辑
+                    if (this.formData.id) {
+                        msg = '更新'
+                        await updateDepartmentApi(this.formData)
+                    } else {
+                        // 新增
+                        await addDepartmentApi({ ...this.formData, pid: this.current_NodeId })
+                    }
                     this.$emit('updateList')
-                    this.$message.success('添加成功')
+                    this.$message.success(`${msg}成功`)
                     this.close()
                 }
             })
@@ -164,7 +180,7 @@ export default {
             // console.log('子组件接收到的current_NodeId：', this.current_NodeId); // 新增：看子组件实际拿到的id
             const res = await getDepartmentDetailApi(this.current_NodeId)
             this.formData = res
-            console.log(this.formData.id);
+            console.log(this.formData.id, this.formData);
         }
     }
 }

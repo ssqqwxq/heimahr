@@ -21,9 +21,24 @@ export function addDepartmentApi(data) {
         data
     })
 }
-// 获取部门详情
+// 获取部门详情用于回显
 export function getDepartmentDetailApi(id) {
     return request({
+        url: `/company/department/${id}`
+    })
+}
+// 编辑/更新部门信息
+export function updateDepartmentApi(data) {
+    return request({
+        method: 'put',
+        url: `/company/department/${data.id}`,
+        data
+    })
+}
+// 删除部门
+export function delDepartmentApi(id) {
+    return request({
+        method: 'delete',
         url: `/company/department/${id}`
     })
 }
