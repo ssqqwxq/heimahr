@@ -46,9 +46,13 @@
               style="height:60px"
               align="middle"
               justify="end">
-        <!-- 放置分页组件 -->
+        <!-- 放置分页组件 total page-size current-page 是el语法-->
         <el-pagination layout="prev, pager, next"
-                       :total="50" />
+                       :total="pageParams.total"
+                       :page-size="pageParams.pagesize"
+                       :current-page="pageParams.page"
+                       @current-change="changePage" />
+        <!-- currentPage 触发会显示当前页 比如点击第2页会跳到第二页 -->
       </el-row>
       <!--
 prev	上一页按钮	« 上一页
@@ -66,7 +70,12 @@ export default {
   name: 'Role',
   data() {
     return {
-      list: []
+      list: [],
+      pageParams: {
+        page: 1, //当前页
+        pagesize: 5, //当前页显示的数据条数
+        total: 0 //	总条目数
+      }
     }
   },
   created() {
@@ -74,10 +83,16 @@ export default {
   },
   methods: {
     async getRoleList() {
-      const res = await getRoleListApi()
+      const res = await getRoleListApi(this.pageParams)
       // console.log(res);
-      const { rows } = res
+      const { rows, total } = res
       this.list = rows
+      this.pageParams.total = total
+    },
+    // 切换分页，请求新数据
+    changePage(newPage) {
+      this.pageParams.page = newPage // 赋值当前页码
+      this.getRoleList()
     }
   }
 }
