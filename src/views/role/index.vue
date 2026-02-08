@@ -16,7 +16,8 @@
                          label="角色"
                          prop="name">
           <template v-slot="{ row }">
-            <el-input v-if="row.isEdit"></el-input>
+            <el-input v-if="row.isEdit"
+                      v-model="row.editRow.name"></el-input>
             <span v-else>{{ row.name }}</span>
           </template>
         </el-table-column>
@@ -27,16 +28,22 @@
                          prop="state">
           <!-- 自定义'启用'列结构  作用域插槽-->
           <template v-slot="{ row }">
-            <el-switch v-if="row.isEdit"></el-switch>
+            <!-- 开 1 关 0 -->
+            <el-switch v-if="row.isEdit"
+                       v-model="row.editRow.state"
+                       :active-value="1"
+                       :inactive-value="0"></el-switch>
             <span v-else>{{ row.state ? '已启用' : '未启用' }}</span>
           </template>
         </el-table-column>
+
         <el-table-column align="center"
                          label="描述"
                          prop="description">
           <template v-slot="{ row }">
             <el-input v-if="row.isEdit"
-                      type="textarea"></el-input>
+                      type="textarea"
+                      v-model="row.editRow.description"></el-input>
             <span v-else>{{ row.description }}</span>
           </template>
         </el-table-column>
@@ -186,7 +193,13 @@ export default {
         // 用 this.$set 而不是直接赋值 item.isEdit = false，
         // 是为了让动态添加的 isEdit 具备 Vue 响应式，修改后能实时更新视图。
         this.$set(item, 'isEdit', false)
-      }); // 行内编辑是需要
+        // 再给每一项添加一个响应的缓存数据 与编辑状态时的列双向绑定
+        this.$set(item, 'editRow', {
+          name: item.name,
+          state: item.state,
+          description: item.description
+        })
+      }); // 行内编辑需要
       console.log(res);
     },
     // 切换分页，请求新数据
@@ -213,7 +226,13 @@ export default {
     // 行内编辑 点击操作列的编辑
     btnEditRow(row) {
       row.isEdit = true
+      row.editRow.name = row.name,
+        row.editRow.state = row.state,
+        row.editRow.description = row.description
       // console.log(row);
+      // 更新缓存数据  row.editRow.name = row.name,,缓存数据来源于真实数据都是叫'王大'
+      // 若编辑状态我给绑定了缓存数据的 输入框写了'王大'123，退出编辑状态再次点击编辑我希望
+      // 输入框显示的是 '王大' 而不是 '王大'123
     }
   }
 }
