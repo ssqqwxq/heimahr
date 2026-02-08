@@ -67,8 +67,14 @@
               <el-button type="text"
                          size="mini"
                          @click="btnEditRow(row)">编辑</el-button>
-              <el-button type="text"
-                         size="mini">删除</el-button>
+              <!-- 删除-气泡确认框 -->
+              <el-popconfirm title="这是一段内容确定删除吗？"
+                             @onConfirm="confirmDel(row.id)">
+                <el-button slot="reference"
+                           style="margin-left:10px"
+                           size="mini"
+                           type="text">删除</el-button>
+              </el-popconfirm>
             </template>
           </template>
 
@@ -152,7 +158,8 @@ sizes	每页条数选择器	10 条 / 页 ▼（可选择 5/10/20） -->
   </div>
 </template>
 <script>
-import { getRoleListApi, addRoleApi, updateRoleApi } from '@/api/role'
+import { getRoleListApi, addRoleApi, updateRoleApi, delRole } from '@/api/role'
+
 export default {
   name: 'Role',
   data() {
@@ -247,8 +254,23 @@ export default {
         row.state = row.editRow.state
         row.description = row.editRow.description
         row.isEdit = false // 退出编辑模式
+        // console.log('原始row.editRow:', { ...row.editRow }, '添加id后:', { ...row.editRow, id: row.id });
+        //原来row.editRow没有id属性,这样写会加个id属性来满足接口要求
+        //原始row.editRow: {name: '123', state: 0, description: '1231232'} 
+        //添加id后:        {name: '123', state: 0, description: '1231232', id: 12}
       } else {
         this.$message.warning('不能为空')
+      }
+    },
+    // 删除的气泡框点击确定时
+    async confirmDel(id) {
+      await delRole(id)
+      this.$message.success('删除角色成功')
+      // 删除的如果是最后一个 返回上一页
+      // console.log(this.list);
+      if (this.list.length === 1) {
+        this.pageParams.page--
+        this.getRoleList()
       }
     }
   }
