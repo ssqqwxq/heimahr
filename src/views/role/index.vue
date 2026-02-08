@@ -55,7 +55,8 @@
             <!-- 编辑状态 -->
             <template v-if="row.isEdit">
               <el-button type="primary"
-                         size="mini">确认</el-button>
+                         size="mini"
+                         @click="btnEditOK(row)">确认</el-button>
               <el-button type="info"
                          size="mini">取消</el-button>
             </template>
@@ -151,7 +152,7 @@ sizes	每页条数选择器	10 条 / 页 ▼（可选择 5/10/20） -->
   </div>
 </template>
 <script>
-import { getRoleListApi, addRoleApi } from '@/api/role'
+import { getRoleListApi, addRoleApi, updateRoleApi } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -233,6 +234,22 @@ export default {
       // 更新缓存数据  row.editRow.name = row.name,,缓存数据来源于真实数据都是叫'王大'
       // 若编辑状态我给绑定了缓存数据的 输入框写了'王大'123，退出编辑状态再次点击编辑我希望
       // 输入框显示的是 '王大' 而不是 '王大'123
+    },
+    // 行内编辑 确定
+    async btnEditOK(row) {
+      if (row.editRow.name && row.editRow.description) {
+        // 点击 确定按钮行内编辑时不为空发请求更显数据
+        await updateRoleApi({ ...row.editRow, id: row.id })
+        this.$message.success('编辑成功')
+        // 上面请求修改的缓存数据 editRow ,关闭行内编辑时
+        // 要把缓存数据给显示的真实数据  
+        row.name = row.editRow.name
+        row.state = row.editRow.state
+        row.description = row.editRow.description
+        row.isEdit = false // 退出编辑模式
+      } else {
+        this.$message.warning('不能为空')
+      }
     }
   }
 }

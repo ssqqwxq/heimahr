@@ -15,3 +15,11 @@ export function addRoleApi(data) {
         data
     })
 }
+//  行内 编辑/更新 角色
+export function updateRoleApi(data) {
+    return request({
+        url: `/sys/role/${data.id}`,
+        method: 'put',
+        data
+    })
+}
