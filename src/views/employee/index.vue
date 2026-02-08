@@ -7,7 +7,9 @@
                   type="text"
                   prefix-icon="el-icon-search"
                   size="small"
-                  placeholder="输入员工姓名全员搜索" />
+                  placeholder="输入员工姓名全员搜索"
+                  v-model="queryParams.keyword"
+                  @input="changeValue" />
         <!-- 树形组件 -->
         <!-- node-key="id" 把节点的id作为标识便可使用setCurrentKey()方法 -->
         <!-- @current-change="selectNode" 当节点切换时触发 会传递当前节点对象 -->
@@ -112,9 +114,10 @@ export default {
       },
       // 存储查询参数
       queryParams: {
-        departmentId: null, //
+        departmentId: null, //当前部门的id
         page: 1, //当前页码
         pagesize: 10,//当前页显示条数
+        keyword: ''//根据名字模糊查询
       },
       total: 0,// 总条数数据
       list: [] // 用户数据
@@ -148,7 +151,7 @@ export default {
       console.log(this.queryParams.departmentId);
       // 切换树结构的项记录id后再次发请求  你点别的树结构子项(传智教育下的其他部门)
       // this.queryParam.departmentId=(你点的部门的id)获取这个部门的数据
-      this.queryParams.page = 1 // 切换其他部门默认页码第一页
+      this.queryParams.page = 1 // 切换其他部门默认页码第一页开始渲染数据
       this.getEmployeeList()
     },
     // 获取员工列表的方法
@@ -158,11 +161,21 @@ export default {
       this.total = res.total
       // console.log(res);
     },
-    // 切换页码时能拿到当前页的数字
+    // 切换页码时能拿到当前页的数据
     changePage(newPage) {
       // alert(newPage)
       this.queryParams.page = newPage   // 赋值新页码
       this.getEmployeeList() // 查询数据
+    },
+    // 输入框值内容发生改变触发
+    changeValue() {
+      // 防抖处理  就是说你输入框值改变后1秒后发请求 如果没到1秒你又输入新值那就清除上一个定时器重新计时
+      // this的实例上赋值了一个timer的属性
+      clearTimeout(this.timer) // 清理上一次的定时器
+      this.timer = setTimeout(() => {
+        this.queryParams.page = 1  // 从第一页开始渲染数据
+        this.getEmployeeList()
+      }, 1000)
     }
   }
 }
