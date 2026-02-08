@@ -9,6 +9,12 @@
                   size="small"
                   placeholder="输入员工姓名全员搜索" />
         <!-- 树形组件 -->
+        <el-tree :data="depts"
+                 :props="defaultProps"
+                 :default-expand-all="true"
+                 :expand-on-click-node="false"
+                 :highlight-current="true"></el-tree>
+        <!-- 默认展开 点击箭头才展开 选中高亮 -->
       </div>
       <div class="right">
         <el-row class="opeate-tools"
@@ -27,8 +33,29 @@
 </template>
 
 <script>
+import { getDepartmentApi } from '@/api/department'
+import { transListToTreeData } from '@/utils'
 export default {
-  name: 'Employee'
+  name: 'Employee',
+  data() {
+    return {
+      depts: [], //组织数据
+      defaultProps: {
+        children: 'children', //读取子节点字段名
+        label: 'name' //显示需要的字段名字
+      }
+    }
+  },
+  created() {
+    this.getDepartment()
+  },
+  methods: {
+    async getDepartment() {
+      const res = await getDepartmentApi()
+      this.depts = transListToTreeData(res, 0)
+      console.log(this.depts);
+    }
+  }
 }
 </script>
 
