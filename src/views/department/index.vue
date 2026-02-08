@@ -98,13 +98,14 @@ export default {
                 this.$nextTick(() => {
                     this.$refs.addDept.getDepartmentDetail() // this.$refs.addDept等同于子组件的this
                 })
+                // 删除
             } else {
                 this.$confirm('您确定要删除该信息么?', '提示', {
                     cancelButtonText: '取消',
                     confirmButtonText: '确定',
                     type: 'warning'
                 })
-                    // 确认
+                    // 确认删除
                     .then(async () => {
                         await delDepartmentApi(id) // 删除操作
                         this.$message({
@@ -113,7 +114,7 @@ export default {
                         });
                         this.getDepartment() // 删除后重新刷新页面
                     })
-                    // 取消
+                    // 取消删除
                     .catch(() => {
                         this.$message({
                             type: 'info',

@@ -15,31 +15,55 @@
                          width="200"
                          label="角色"
                          prop="name">
+          <template v-slot="{ row }">
+            <el-input v-if="row.isEdit"></el-input>
+            <span v-else>{{ row.name }}</span>
+          </template>
         </el-table-column>
+
         <el-table-column align="center"
                          width="200"
                          label="启用"
                          prop="state">
           <!-- 自定义'启用'列结构  作用域插槽-->
           <template v-slot="{ row }">
-            <span>{{ row.state ? '已启用' : '未启用' }}</span>
+            <el-switch v-if="row.isEdit"></el-switch>
+            <span v-else>{{ row.state ? '已启用' : '未启用' }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center"
                          label="描述"
                          prop="description">
+          <template v-slot="{ row }">
+            <el-input v-if="row.isEdit"
+                      type="textarea"></el-input>
+            <span v-else>{{ row.description }}</span>
+          </template>
         </el-table-column>
+
         <el-table-column align="center"
                          label="操作">
-          <!-- 自定义'操作'结构 默认插槽 -->
-          <template v-slot>
-            <el-button type="text"
-                       size="mini">分配权限</el-button>
-            <el-button type="text"
-                       size="mini">编辑</el-button>
-            <el-button type="text"
-                       size="mini">删除</el-button>
+          <!-- 自定义'操作'结构  -->
+          <template v-slot="{ row }">
+            <!-- 编辑状态 -->
+            <template v-if="row.isEdit">
+              <el-button type="primary"
+                         size="mini">确认</el-button>
+              <el-button type="info"
+                         size="mini">取消</el-button>
+            </template>
+            <!-- 非编辑状态 -->
+            <template v-else>
+              <el-button type="text"
+                         size="mini">分配权限</el-button>
+              <el-button type="text"
+                         size="mini"
+                         @click="btnEditRow(row)">编辑</el-button>
+              <el-button type="text"
+                         size="mini">删除</el-button>
+            </template>
           </template>
+
         </el-table-column>
       </el-table>
       <!-- 放置分页组件 -->
@@ -63,6 +87,7 @@ jumper	页码跳转输入框	前往第 □ 页
 total	数据总条数显示	共 50 条
 sizes	每页条数选择器	10 条 / 页 ▼（可选择 5/10/20） -->
     </div>
+    <!-- '添加角色' 弹层 -->
     <el-dialog @close="btnCancel"
                width="500px"
                title="新增角色"
@@ -85,7 +110,7 @@ sizes	每页条数选择器	10 条 / 页 ▼（可选择 5/10/20） -->
         <el-form-item label="启用"
                       prop="state">
           <!--  :active-value="1" switch 打开时的值 = 1
-              :inactive-value switch 关闭时的值 = 0         -->
+              :inactive-value switch 关闭时的值 = 0     (替换掉默认的布尔值) -->
           <el-switch v-model="roleForm.state"
                      :active-value="1"
                      :inactive-value="0"
@@ -134,7 +159,7 @@ export default {
       roleForm: {
         name: '',
         description: '',
-        state: 0  // 默认是0  1是开
+        state: 0  // 默认是0关  1是开
       },
       // 定义校验规则
       rules: {
@@ -149,10 +174,20 @@ export default {
   methods: {
     async getRoleList() {
       const res = await getRoleListApi(this.pageParams)
-      // console.log(res);
       const { rows, total } = res
       this.list = rows
       this.pageParams.total = total
+      // 针对每一行数据添加一个编辑标记
+      rows.forEach(item => {
+        // item.isEdit = false // 添加一个属性 初始值为false
+        // 数据响应式的问题  数据变化 视图更新
+        // 添加的动态属性 不具备响应式特点
+        // this.$set(目标对象, 属性名称, 初始值) 可以针对目标对象 添加的属性 添加响应式
+        // 用 this.$set 而不是直接赋值 item.isEdit = false，
+        // 是为了让动态添加的 isEdit 具备 Vue 响应式，修改后能实时更新视图。
+        this.$set(item, 'isEdit', false)
+      }); // 行内编辑是需要
+      console.log(res);
     },
     // 切换分页，请求新数据
     changePage(newPage) {
@@ -172,9 +207,14 @@ export default {
     },
     // 取消按钮 重置表单关闭弹层逻辑
     btnCancel() {
-      this.$refs.roleForm.resetFields() // 重置表单数据
+      this.$refs.roleForm.resetFields() // 重置有绑定prop的字段 + 清校验
       this.showDialog = false // 关闭弹层
     },
+    // 行内编辑 点击操作列的编辑
+    btnEditRow(row) {
+      row.isEdit = true
+      // console.log(row);
+    }
   }
 }
 </script>

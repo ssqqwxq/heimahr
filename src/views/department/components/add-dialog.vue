@@ -97,7 +97,7 @@ export default {
                         let res = await getDepartmentApi()
                         // 判断是不是编辑场景 编辑场景有id
                         if (this.formData.id) {
-                            // 编辑场景 排除自身(因为点的是编辑那么这数据就一定存在，把这项排除检查其他项是否重复)
+                            // 编辑场景 排除自身(因为点的是编辑那么这数据就一定存在，把自身这项排除才能往下走)
                             res = res.filter(item => item.id !== this.formData.id)
                         }
                         if (res.some(item => item.code === value)) {
