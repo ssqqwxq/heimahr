@@ -31,30 +31,55 @@
           <el-button size="mini">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
-        <el-table :data="depts">
+        <el-table :data="list">
           <el-table-column align="center"
-                           label="头像" />
-          <el-table-column label="姓名" />
-          <el-table-column label="手机号"
-                           sortable />
-          <!-- sortable属性即可实现该列的排序功能 -->
-          <el-table-column label="工号"
-                           sortable />
-          <el-table-column label="聘用形式" />
-          <el-table-column label="部门" />
-          <el-table-column label="入职时间"
-                           sortable />
-          <el-table-column label="操作"
-                           width="280px">
-            <template>
-              <el-button size="mini"
-                         type="text">查看</el-button>
-              <el-button size="mini"
-                         type="text">角色</el-button>
-              <el-button size="mini"
-                         type="text">删除</el-button>
+                           label="头像"
+                           prop="staffPhoto">
+            <template v-slot="{ row }">
+              <el-avatar v-if="row.staffPhoto"
+                         :src="'https://upload-bbs.miyoushe.com/upload/2024/06/26/285532152/49bb65e1c73b7253fc6183fe6607d247_504523220142163736.gif'"
+                         :size="30" />
+              <span v-else
+                    class="username">{{ row.username?.charAt(2) }}</span>
             </template>
           </el-table-column>
+
+          <el-table-column label="姓名"
+                           prop="username"></el-table-column>
+
+          <el-table-column label="手机号"
+                           prop="mobile"
+                           sortable></el-table-column>
+          <!-- sortable属性即可实现该列的排序功能 -->
+          <el-table-column label="工号"
+                           prop="workNumber"
+                           sortable></el-table-column>
+
+          <el-table-column label="聘用形式"
+                           prop="formOfEmployment">
+            <template v-slot="{ row }">
+              <span v-if="row.formOfEmployment === 1"> 正式</span>
+              <span v-else="row.formOfEmployment===2">非正式</span>
+            </template></el-table-column>
+
+          <el-table-column label="部门"
+                           prop="departmentName"></el-table-column>
+
+          <el-table-column label="入职时间"
+                           prop="timeOfEntry"
+                           sortable></el-table-column>
+
+          <el-table-column label="操作"
+                           width="280px"></el-table-column>
+          <template>
+            <el-button size="mini"
+                       type="text">查看</el-button>
+            <el-button size="mini"
+                       type="text">角色</el-button>
+            <el-button size="mini"
+                       type="text">删除</el-button>
+          </template>
+
         </el-table>
         <!-- 分页 -->
         <el-row style="height: 60px"
@@ -62,7 +87,10 @@
                 type="flex"
                 justify="end">
           <el-pagination layout="total,prev, pager, next"
-                         :total="1000" />
+                         :total="total"
+                         :page-size="queryParams.pagesize"
+                         :current-page="queryParams.page"
+                         @current-change="changePage" />
         </el-row>
       </div>
     </div>
@@ -72,6 +100,7 @@
 <script>
 import { getDepartmentApi } from '@/api/department'
 import { transListToTreeData } from '@/utils'
+import { getEmployeeListApi } from '@/api/employee'
 export default {
   name: 'Employee',
   data() {
@@ -83,8 +112,12 @@ export default {
       },
       // 存储查询参数
       queryParams: {
-        departmentId: null
-      }
+        departmentId: null, //
+        page: 1, //当前页码
+        pagesize: 10,//当前页显示条数
+      },
+      total: 0,// 总条数数据
+      list: [] // 用户数据
     }
   },
   created() {
@@ -103,14 +136,33 @@ export default {
       // setCurrentKey(1) → 选中 “id=1” 的节点（即 “传智教育”）；
       // setCurrentKey() 通过 key 设置某个节点的当前选中状态，使用此方法必须设置 node-key 属性
       this.$nextTick(() => {
-        this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
-      })
+        this.$refs.deptTree.setCurrentKey(this.queryParams)
+      }) // 记录第一个默认显示的项后 发请求获取数据  这个接口传this.queryParam.departmentId=1是获取全部数据
+      // 因为 所有的数据 都是 传智教育 这个项目下的部门
+      this.getEmployeeList()
     },
     selectNode(node) {
       // console.log(node);
       // 切换节点时再次记录id
       this.queryParams.departmentId = node.id
       console.log(this.queryParams.departmentId);
+      // 切换树结构的项记录id后再次发请求  你点别的树结构子项(传智教育下的其他部门)
+      // this.queryParam.departmentId=(你点的部门的id)获取这个部门的数据
+      this.queryParams.page = 1 // 切换其他部门默认页码第一页
+      this.getEmployeeList()
+    },
+    // 获取员工列表的方法
+    async getEmployeeList() {
+      const res = await getEmployeeListApi(this.queryParams)
+      this.list = res.rows
+      this.total = res.total
+      // console.log(res);
+    },
+    // 切换页码时能拿到当前页的数字
+    changePage(newPage) {
+      // alert(newPage)
+      this.queryParams.page = newPage   // 赋值新页码
+      this.getEmployeeList() // 查询数据
     }
   }
 }
