@@ -9,8 +9,13 @@
                   size="small"
                   placeholder="输入员工姓名全员搜索" />
         <!-- 树形组件 -->
-        <el-tree :data="depts"
+        <!-- node-key="id" 把节点的id作为标识便可使用setCurrentKey()方法 -->
+        <!-- @current-change="selectNode" 当节点切换时触发 会传递当前节点对象 -->
+        <el-tree ref="deptTree"
+                 :data="depts"
                  :props="defaultProps"
+                 node-key="id"
+                 @current-change="selectNode"
                  :default-expand-all="true"
                  :expand-on-click-node="false"
                  :highlight-current="true"></el-tree>
@@ -43,6 +48,10 @@ export default {
       defaultProps: {
         children: 'children', //读取子节点字段名
         label: 'name' //显示需要的字段名字
+      },
+      // 存储查询参数
+      queryParams: {
+        departmentId: null
       }
     }
   },
@@ -50,10 +59,26 @@ export default {
     this.getDepartment()
   },
   methods: {
+    // 获取组织信息转换成树结构
     async getDepartment() {
       const res = await getDepartmentApi()
       this.depts = transListToTreeData(res, 0)
-      console.log(this.depts);
+      // console.log(this.depts);
+      // 默认选中节点 是第一个传智教育
+      this.queryParams.departmentId = this.depts[0].id // log. 1
+      // 等Dom渲染完再进行
+      // node-key="id" → 声明 “用节点的 id 字段当唯一标识”；
+      // setCurrentKey(1) → 选中 “id=1” 的节点（即 “传智教育”）；
+      // setCurrentKey() 通过 key 设置某个节点的当前选中状态，使用此方法必须设置 node-key 属性
+      this.$nextTick(() => {
+        this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
+      })
+    },
+    selectNode(node) {
+      // console.log(node);
+      // 切换节点时再次记录id
+      this.queryParams.departmentId = node.id
+      console.log(this.queryParams.departmentId);
     }
   }
 }
