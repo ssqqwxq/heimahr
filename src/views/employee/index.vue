@@ -29,7 +29,8 @@
                 justify="end">
           <el-button size="mini"
                      type="primary">添加员工</el-button>
-          <el-button size="mini">excel导入</el-button>
+          <el-button size="mini"
+                     @click="showExcelDialog = true">excel导入</el-button>
           <el-button size="mini"
                      @click="exportEmployee">excel导出</el-button>
         </el-row>
@@ -96,6 +97,7 @@
                          @current-change="changePage" />
         </el-row>
       </div>
+      <ImportExcel :showExcelDialog.sync="showExcelDialog"></ImportExcel>
     </div>
   </div>
 </template>
@@ -104,6 +106,7 @@
 import { getDepartmentApi } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import { getEmployeeListApi, exportEmployeeApi } from '@/api/employee'
+import ImportExcel from './components/import-excel.vue'
 import FileSaver from 'file-saver'
 export default {
   name: 'Employee',
@@ -122,8 +125,12 @@ export default {
         keyword: ''//根据名字模糊查询
       },
       total: 0,// 总条数数据
-      list: [] // 用户数据
+      list: [], // 用户数据
+      showExcelDialog: false // 导入文件弹层显示
     }
+  },
+  components: {
+    ImportExcel
   },
   created() {
     this.getDepartment()
