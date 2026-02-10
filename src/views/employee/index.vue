@@ -30,7 +30,8 @@
           <el-button size="mini"
                      type="primary">添加员工</el-button>
           <el-button size="mini">excel导入</el-button>
-          <el-button size="mini">excel导出</el-button>
+          <el-button size="mini"
+                     @click="exportEmployee">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
         <el-table :data="list">
@@ -102,12 +103,13 @@
 <script>
 import { getDepartmentApi } from '@/api/department'
 import { transListToTreeData } from '@/utils'
-import { getEmployeeListApi } from '@/api/employee'
+import { getEmployeeListApi, exportEmployeeApi } from '@/api/employee'
+import FileSaver from 'file-saver'
 export default {
   name: 'Employee',
   data() {
     return {
-      depts: [], //组织数据
+      depts: [], //树组织数据
       defaultProps: {
         children: 'children', //读取子节点字段名
         label: 'name' //显示需要的字段名字
@@ -161,7 +163,7 @@ export default {
       this.total = res.total
       // console.log(res);
     },
-    // 切换页码时能拿到当前页的数据
+    // 切换页码时能拿到当前页的页码数
     changePage(newPage) {
       // alert(newPage)
       this.queryParams.page = newPage   // 赋值新页码
@@ -176,6 +178,14 @@ export default {
         this.queryParams.page = 1  // 从第一页开始渲染数据
         this.getEmployeeList()
       }, 1000)
+    },
+    // 导出员工execle表
+    async exportEmployee() {
+      const res = await exportEmployeeApi() //导出所有的员工接口
+      console.log(res);
+      // console.log(result) // 使用一个npm包 直接将blob文件下载到本地 file-saver
+      // FileSaver.saveAs(blob对象,文件名称)
+      FileSaver.saveAs(res, '员工信息表.xlsx') // 下载文件
     }
   }
 }

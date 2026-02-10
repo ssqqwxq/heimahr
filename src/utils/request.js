@@ -6,7 +6,7 @@ import router from '@/router'
 const service = axios.create({
   // Vue代码中NODE_ENV之外，所有的变量必须以VUE_APP_开头
   baseURL: process.env.VUE_APP_BASE_API, //( '/api' )页面请求地址会加上这个前缀 如 /api/sys/login
-  timeout: 10000 //请求超时时间
+  timeout: 15000 //请求超时时间
 })
 
 // 请求拦截器
@@ -27,6 +27,8 @@ service.interceptors.request.use((config) => {
 // 响应拦截器
 // 根据返回的默认数据格式(可解析出success) 判断 如果成功那就返回数据 否则提示错误信息
 service.interceptors.response.use((response) => {
+  // 判断是不是Blob
+  if (response.data instanceof Blob) return response.data // 返回了Blob对象
   const { data, message, success } = response.data
   if (success) {
     return data
