@@ -61,10 +61,11 @@
 
           <el-table-column label="聘用形式"
                            prop="formOfEmployment">
-            <template v-slot="{ row }">
+            <template slot-scope="{ row }">
               <span v-if="row.formOfEmployment === 1"> 正式</span>
-              <span v-else="row.formOfEmployment===2">非正式</span>
-            </template></el-table-column>
+              <span v-else-if="row.formOfEmployment === 2">非正式</span>
+            </template>
+          </el-table-column>
 
           <el-table-column label="部门"
                            prop="departmentName"></el-table-column>
@@ -74,15 +75,21 @@
                            sortable></el-table-column>
 
           <el-table-column label="操作"
-                           width="280px"></el-table-column>
-          <template>
-            <el-button size="mini"
-                       type="text">查看</el-button>
-            <el-button size="mini"
-                       type="text">角色</el-button>
-            <el-button size="mini"
-                       type="text">删除</el-button>
-          </template>
+                           width="280px">
+            <template slot-scope="{ row }">
+              <el-button size="mini"
+                         type="text">查看</el-button>
+              <el-button size="mini"
+                         type="text">角色</el-button>
+              <el-popconfirm title="这是一段内容确定删除吗？"
+                             @onConfirm="confirmDel(row.id)">
+                <el-button slot="reference"
+                           style="margin-left:10px"
+                           size="mini"
+                           type="text">删除</el-button>
+              </el-popconfirm>
+            </template>
+          </el-table-column>
 
         </el-table>
         <!-- 分页 -->
@@ -97,7 +104,9 @@
                          @current-change="changePage" />
         </el-row>
       </div>
-      <ImportExcel :showExcelDialog.sync="showExcelDialog"></ImportExcel>
+      <ImportExcel :showExcelDialog.sync="showExcelDialog"
+                   @uploadSuccess="getEmployeeList">
+      </ImportExcel>
     </div>
   </div>
 </template>
@@ -105,7 +114,7 @@
 <script>
 import { getDepartmentApi } from '@/api/department'
 import { transListToTreeData } from '@/utils'
-import { getEmployeeListApi, exportEmployeeApi } from '@/api/employee'
+import { getEmployeeListApi, exportEmployeeApi, delEmployeeApi } from '@/api/employee'
 import ImportExcel from './components/import-excel.vue'
 import FileSaver from 'file-saver'
 export default {
@@ -148,7 +157,7 @@ export default {
       // setCurrentKey(1) → 选中 “id=1” 的节点（即 “传智教育”）；
       // setCurrentKey() 通过 key 设置某个节点的当前选中状态，使用此方法必须设置 node-key 属性
       this.$nextTick(() => {
-        this.$refs.deptTree.setCurrentKey(this.queryParams)
+        this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
       }) // 记录第一个默认显示的项后 发请求获取数据  这个接口传this.queryParam.departmentId=1是获取全部数据
       // 因为 所有的数据 都是 传智教育 这个项目下的部门
       this.getEmployeeList()
@@ -193,6 +202,17 @@ export default {
       // console.log(result) // 使用一个npm包 直接将blob文件下载到本地 file-saver
       // FileSaver.saveAs(blob对象,文件名称)
       FileSaver.saveAs(res, '员工信息表.xlsx') // 下载文件
+    },
+    // 删除员工
+    async confirmDel(id) {
+      await delEmployeeApi(id)
+      console.log(this.list);
+      // 如果当前页显示的数据是最后一条 那么自动往前翻一页
+      if (this.list.length === 1) {
+        this.queryParams.page--
+      }
+      this.getEmployeeList()
+      this.$message.success('删除成功')
     }
   }
 }

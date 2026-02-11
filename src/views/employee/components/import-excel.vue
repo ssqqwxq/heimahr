@@ -6,15 +6,21 @@
         <el-row type="flex"
                 justify="center">
             <div class="upload-excel">
+                <!-- 上传文件的弹出选择文件 -->
                 <input ref="excel-upload-input"
                        class="excel-upload-input"
                        type="file"
-                       accept=".xlsx, .xls">
+                       accept=".xlsx, .xls"
+                       @change="uploadChange"> <!--选择文件-打开 触发后-->
                 <div class="drop">
                     <i class="el-icon-upload" />
-                    <el-button type="text">下载导入模板</el-button>
+                    <el-button type="text"
+                               @click="getTemplate">下载导入模板
+                    </el-button>
                     <span>将文件拖到此处或
-                        <el-button type="text">点击上传</el-button>
+                        <el-button type="text"
+                                   @click="handleUpload">点击上传
+                        </el-button>
                     </span>
                 </div>
             </div>
@@ -29,7 +35,8 @@
     </el-dialog>
 </template>
 <script>
-
+import { getExportTemplate, uploadExcelApi } from '@/api/employee'
+import FileSaver from 'file-saver'
 export default {
     props: {
         showExcelDialog: {
@@ -38,7 +45,36 @@ export default {
         }
     },
     methods: {
-
+        async getTemplate() {
+            const res = await getExportTemplate()
+            FileSaver.saveAs(res, '员工导入模版.xlsx')  // FileSaver.saveAs(blob对象,文件名称)
+        },
+        // 点击上传-弹出文件选择框
+        handleUpload() {
+            this.$refs["excel-upload-input"].click() // this.$refs.属性名 和 this.$refs[属性名] 等价
+        },
+        // 选择文件-打开 触发后
+        // e 事件对象	e.target.files触发事件对象的input元素的文件列表（FileList）
+        uploadChange(e) {
+            //console.log(e.target.files);// {name: '员工信息表.xlsx'....} length:1
+            // 如果 length > 0 说明有文件要上传
+            if (e.target.files.length > 0) {
+                const data = new FormData()
+                data.append('file', e.target.files[0])
+                // 成功
+                try {
+                    uploadExcelApi(data)
+                    this.$emit('uploadSuccess') // 通知父组件 我上传成功
+                    this.$emit('update:showExcelDialog', false) // 关闭弹层
+                }
+                // 失败
+                catch (error) { }
+                // 成功失败都会执行
+                finally {
+                    this.$refs["excel-upload-input"].value = '' // 避免下次上传是同一个文件
+                }
+            }
+        }
     }
 }
 </script>
