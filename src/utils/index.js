@@ -126,7 +126,7 @@ export function transListToTreeData(list, rootValue) {
       const children = transListToTreeData(list, item.id) // 这次传item.id是1 找pid===1的就是要做子节点
       // 给原本无children的item，动态新增children属性，赋值子节点数组
       // 当前子节点赋值给节点（子节点是pid=1的人事部，给‘传智教育’）
-      item.children = children
+      if (children.length) { item.children = children } // 将子节点赋值给当前节点
       arr.push(item)
     }
   })
