@@ -79,7 +79,8 @@
                            width="280px">
             <template slot-scope="{ row }">
               <el-button size="mini"
-                         type="text">查看</el-button>
+                         type="text"
+                         @click="$router.push(`/employee/detail/${row.id}`)">查看</el-button>
               <el-button size="mini"
                          type="text">角色</el-button>
               <el-popconfirm title="这是一段内容确定删除吗？"

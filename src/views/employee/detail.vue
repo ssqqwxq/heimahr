@@ -119,7 +119,7 @@
 
 <script>
 import selectTree from './components/select-tree.vue'
-import { addEmployee } from '@/api/employee'
+import { addEmployee, getEmployeeDetailApi } from '@/api/employee'
 export default {
     components: { selectTree },
     data() {
@@ -135,7 +135,7 @@ export default {
             },
             rules: {
                 username: [{ required: true, message: '请输入姓名', trigger: 'blur' }, {
-                    min: 1, max: 4, message: '姓名为1-4位'
+                    min: 1, max: 8, message: '姓名为1-4位'
                 }],
                 mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }, {
                     //   pattern 正则表达式
@@ -160,7 +160,12 @@ export default {
             }
         }
     },
+    created() {
+        // console.log(this.$route.params);
+        this.$route.params.id && this.getEmployeeDetail()
+    },
     methods: {
+        // 表单验证 员工新增
         saveData() {
             this.$refs.userForm.validate(async (isok) => {
                 if (isok) {
@@ -169,6 +174,11 @@ export default {
                     this.$router.push('/employee')
                 }
             })
+        },
+        // 在主页面点击 查看 处理的编辑逻辑
+        async getEmployeeDetail() {
+            const res = await getEmployeeDetailApi(this.$route.params.id)
+            this.userInfo = res
         }
     },
 }
