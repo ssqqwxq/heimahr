@@ -65,7 +65,7 @@ export default {
         pid: '0', // 子pid = 父id 因为做的是树 需要知道添加到哪个节点下了
         enVisible: '0', // 默认关闭 0/1
         id: null, // 记录id 点击的id就是子项的pid
-      }, n: '',
+      },
 
       rules: {
         name: [{ required: true, message: '权限名称不能为空', trigger: 'blur' }],
