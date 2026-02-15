@@ -38,7 +38,8 @@
                                           prop="mobile">
                                 <el-input v-model="userInfo.mobile"
                                           size="mini"
-                                          class="inputW" />
+                                          class="inputW"
+                                          :disabled="$route.params.id ? true : false" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -98,6 +99,7 @@
                         <el-col :span="12">
                             <el-form-item label="员工头像">
                                 <!-- 放置上传图片 -->
+                                <imageUpload v-model="userInfo.staffPhoto"></imageUpload>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -118,10 +120,13 @@
 </template>
 
 <script>
+
 import selectTree from './components/select-tree.vue'
-import { addEmployee, getEmployeeDetailApi } from '@/api/employee'
+import imageUpload from './components/image-upload.vue';
+import { addEmployee, getEmployeeDetailApi, updateEmployeeApi } from '@/api/employee'
+
 export default {
-    components: { selectTree },
+    components: { selectTree, imageUpload },
     data() {
         return {
             userInfo: {
@@ -131,11 +136,12 @@ export default {
                 formOfEmployment: null, // 聘用形式
                 departmentId: 3, // 部门id
                 timeOfEntry: '', // 入职时间
-                correctionTime: '' // 转正时间
+                correctionTime: '',// 转正时间
+                staffPhoto: '' // 头像地址
             },
             rules: {
                 username: [{ required: true, message: '请输入姓名', trigger: 'blur' }, {
-                    min: 1, max: 8, message: '姓名为1-4位'
+                    min: 1, max: 4, message: '姓名为1-4位'
                 }],
                 mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }, {
                     //   pattern 正则表达式
@@ -162,23 +168,31 @@ export default {
     },
     created() {
         // console.log(this.$route.params);
-        this.$route.params.id && this.getEmployeeDetail()
+        this.$route.params.id && this.getEmployeeDetail()  // 要是携带id传进来那就发请求根据id实现反显
     },
     methods: {
         // 表单验证 员工新增
         saveData() {
             this.$refs.userForm.validate(async (isok) => {
                 if (isok) {
-                    await addEmployee(this.userInfo)
-                    this.$message.success('添加成功')
+                    // 有id 编辑模式
+                    if (this.$route.params.id) {
+                        await updateEmployeeApi(this.userInfo)
+                        this.$message.success('编辑员工成功')
+                        //  添加模式
+                    } else {
+                        await addEmployee(this.userInfo)
+                        this.$message.success('添加员工成功')
+                    }
                     this.$router.push('/employee')
                 }
             })
         },
-        // 在主页面点击 查看 处理的编辑逻辑
+        // 在主页面点击 查看 跳转传参实现反显
         async getEmployeeDetail() {
             const res = await getEmployeeDetailApi(this.$route.params.id)
             this.userInfo = res
+            console.log(res);
         }
     },
 }

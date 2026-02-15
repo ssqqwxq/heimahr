@@ -45,9 +45,17 @@ export function addEmployee(data) {
         data
     })
 }
-// 查询员工 获取员工基本信息
+// 查询员工 获取员工基本信息 反显
 export function getEmployeeDetailApi(id) {
     return request({
         url: `/sys/user/${id}`,
+    })
+}
+// 修改员工基本信息 编辑
+export function updateEmployeeApi(data) {
+    return request({
+        url: `/sys/user/${data.id}`,
+        method: 'put',
+        data
     })
 }

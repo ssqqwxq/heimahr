@@ -42,7 +42,7 @@
                            prop="staffPhoto">
             <template v-slot="{ row }">
               <el-avatar v-if="row.staffPhoto"
-                         :src="'https://upload-bbs.miyoushe.com/upload/2024/06/26/285532152/49bb65e1c73b7253fc6183fe6607d247_504523220142163736.gif'"
+                         :src="row.staffPhoto"
                          :size="30" />
               <span v-else
                     class="username">{{ row.username?.charAt(2) }}</span>
