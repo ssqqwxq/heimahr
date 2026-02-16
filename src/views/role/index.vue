@@ -42,7 +42,7 @@
             </template>
             <!-- 非编辑状态 -->
             <template v-else>
-              <el-button type="text" size="mini" @click="btnPermission">分配权限</el-button>
+              <el-button type="text" size="mini" @click="btnPermission(row.id)">分配权限</el-button>
               <el-button type="text" size="mini" @click="btnEditRow(row)">编辑</el-button>
               <!-- 删除-气泡确认框 -->
               <el-popconfirm title="这是一段内容确定删除吗？" @onConfirm="confirmDel(row.id)">
@@ -102,14 +102,23 @@ sizes	每页条数选择器	10 条 / 页 ▼（可选择 5/10/20） -->
     </el-dialog>
     <!-- 分配权限弹层 -->
     <el-dialog :visible.sync="showPermission" title="分配权限">
-      <!-- 树结构数据 -->
-      <el-tree :data="permissionData" :props="{ label: 'name' }" :default-expand-all="true"
-        :show-checkbox="true"></el-tree>
+      <!-- 树结构数据  default-checked-keys 选中节点的key数组   node-key="id" id为节点的唯一标识  :check-strictly="true"父子不关联-->
+      <el-tree ref="permTree" :check-strictly="true" :data="permissionData" :props="{ label: 'name' }"
+        :default-expand-all="true" :show-checkbox="true" :default-checked-keys="permIds" node-key="id">
+      </el-tree>
+      <template #footer>
+        <el-row type="flex" justify="center">
+          <el-col :span="12" style="text-align: center;">
+            <el-button type="primary" size="mini" @click="btnPermissionOK">确定</el-button>
+            <el-button size="mini" @click="showPermission = false">取消</el-button>
+          </el-col>
+        </el-row>
+      </template>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getRoleListApi, addRoleApi, updateRoleApi, delRole } from '@/api/role'
+import { getRoleListApi, addRoleApi, updateRoleApi, delRole, getRoleDetail, assignPerm } from '@/api/role'
 import { getPermissionApi } from '@/api/permission'
 import { transListToTreeData } from '@/utils/index'
 
@@ -136,7 +145,9 @@ export default {
       },
       // 分配权限
       showPermission: false, // 分配权限弹层
-      permissionData: [] // 存储权限数组
+      permissionData: [], // 存储权限树形数据
+      currentRoleId: null, // 点击的id
+      permIds: [] // 角色关联的权限集合
     }
   },
   created() {
@@ -230,12 +241,25 @@ export default {
       }
     },
     // 点击分配权限
-    async btnPermission() {
-      this.showPermission = true
+    async btnPermission(id) {
       const res = await getPermissionApi()
       // console.log(res);
-      this.permissionData = transListToTreeData(res, 0)
-      console.log(this.permissionData);
+      this.permissionData = transListToTreeData(res, 0) // 存储树结构数据
+      // console.log(this.permissionData);
+      this.currentRoleId = id  // 根据id获取该角色关联的权限集合
+      const { permIds } = await getRoleDetail(this.currentRoleId)
+      // console.log(permIds);
+      this.permIds = permIds
+      this.showPermission = true // 先获取数据再打开弹层 避免出现先开弹层数据还没获取的延迟现象
+    },
+    // 分配权限弹层 确认
+    async btnPermissionOK() {
+      const res = await assignPerm({
+        id: this.currentRoleId,
+        permIds: this.$refs.permTree.getCheckedKeys()
+      })
+      this.$message.success('角色分配权限成功')
+      this.showPermission = false
     }
   }
 }
