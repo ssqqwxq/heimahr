@@ -80,15 +80,15 @@ export default {
   methods: {
     async getPermission() {
       const res = await getPermissionApi()
-      res.push({
-        id: 9,
-        name: '测试',
-        code: 'cs',
-        description: '测试',
-        pid: 1,
-        type: 2,
-        enVisible: '1'
-      })
+      // res.push({
+      //   id: 9,
+      //   name: '测试',
+      //   code: 'cs',
+      //   description: '测试',
+      //   pid: 1,
+      //   type: 2,
+      //   enVisible: '1'
+      // })
       console.log(res);
       const list = transListToTreeData(res, 0)
       this.data = list
