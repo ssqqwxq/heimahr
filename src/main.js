@@ -43,7 +43,7 @@ Vue.directive('permission', {
     // el 指令作用的元素的dom对象
     // binding 是v-permission="表达式" 拿到的信息
     console.log(el, binding);
-    const points = store.state.user.userInfo.roles.points
+    const points = store.state.user.userInfo?.roles?.points || [] // 当前用户信息的操作权
     if (!points.includes(binding.value)) {
       // 不存在就要删除或者禁用
       el.remove() // 删除元素
