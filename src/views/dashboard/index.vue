@@ -7,7 +7,7 @@
           <!-- 个人信息 -->
           <div class="user-info">
             <img v-if="avatar" class="avatar" :src="avatar" alt="">
-            <span v-else class="username">{{ name?.charAt(2) }}</span>
+            <span v-else class="username">{{ name?.charAt(0) }}</span>
             <div class="company-info">
               <div class="title">
                 江苏传智播客教育科技股份有限公司
@@ -20,32 +20,32 @@
           <div class="todo-list">
             <div class="todo-item">
               <span>组织总人数</span>
-              <!-- 起始值 终点值  滚动时间 -->
-              <CountTo :start-val="0" :end-val="228" dutation="1000"></CountTo>
+              <!-- 起始值 终点值 动画时间 -->
+              <count-to :start-val="0" :end-val="homeData.employeeTotal" :duration="1000" />
             </div>
             <div class="todo-item">
               <span>正式员工</span>
-              <CountTo :start-val="0" :end-val="334" dutation="1000"></CountTo>
+              <count-to :start-val="0" :end-val="homeData.regularEmployeeTotal" :duration="1000" />
             </div>
             <div class="todo-item">
               <span>合同待签署</span>
-              <span>345</span>
+              <count-to :start-val="0" :end-val="homeData.contractSignTotal" :duration="1000" />
             </div>
             <div class="todo-item">
               <span>待入职</span>
-              <CountTo :start-val="0" :end-val="890" dutation="1000"></CountTo>
+              <count-to :start-val="0" :end-val="homeData.toBeEmployed" :duration="1000" />
             </div>
             <div class="todo-item">
               <span>本月待转正</span>
-              <CountTo :start-val="0" :end-val="117" dutation="1000"></CountTo>
+              <count-to :start-val="0" :end-val="homeData.toBeConfirmed" :duration="1000" />
             </div>
             <div class="todo-item">
               <span>本月待离职</span>
-              <CountTo :start-val="0" :end-val="234" dutation="1000"></CountTo>
+              <count-to :start-val="0" :end-val="homeData.toBeDismissed" :duration="1000" />
             </div>
             <div class="todo-item">
               <span>接口总访问</span>
-              <CountTo :start-val="0" :end-val="789" dutation="1000"></CountTo>
+              <count-to :start-val="0" :end-val="homeData.interfaceAccessTotal" :duration="1000" />
             </div>
           </div>
         </div>
@@ -82,20 +82,22 @@
             <div class="chart-info">
               <div class="info-main">
                 <span>申报人数</span>
-                <CountTo :start-val="0" :end-val="223" dutation="1000"></CountTo>
+                <!-- homeData: {} -->
+                <count-to :start-val="0" :end-val="homeData.socialInsurance?.declarationTotal" :duration="1000" />
+
               </div>
               <div class="info-list">
                 <div class="info-list-item">
                   <span>待申报(人)</span>
-                  <CountTo :start-val="0" :end-val="117" dutation="1000"></CountTo>
+                  <count-to :start-val="0" :end-val="homeData.socialInsurance?.toDeclareTotal" :duration="1000" />
                 </div>
                 <div class="info-list-item">
                   <span>申报中(人)</span>
-                  <CountTo :start-val="0" :end-val="167" dutation="1000"></CountTo>
+                  <count-to :start-val="0" :end-val="homeData.socialInsurance?.declaringTotal" :duration="1000" />
                 </div>
                 <div class="info-list-item">
                   <span>已申报(人)</span>
-                  <CountTo :start-val="0" :end-val="24" dutation="1000"></CountTo>
+                  <count-to :start-val="0" :end-val="homeData.socialInsurance?.declaredTotal" :duration="1000" />
                 </div>
               </div>
             </div>
@@ -111,20 +113,20 @@
             <div class="chart-info">
               <div class="info-main">
                 <span>申报人数</span>
-                <CountTo :start-val="0" :end-val="335" dutation="1000"></CountTo>
+                <count-to :start-val="0" :end-val="homeData.providentFund?.declarationTotal" :duration="1000" />
               </div>
               <div class="info-list">
                 <div class="info-list-item">
                   <span>待申报(人)</span>
-                  <CountTo :start-val="0" :end-val="345" dutation="1000"></CountTo>
+                  <count-to :start-val="0" :end-val="homeData.providentFund?.toDeclareTotal" :duration="1000" />
                 </div>
                 <div class="info-list-item">
                   <span>申报中(人)</span>
-                  <CountTo :start-val="0" :end-val="109" dutation="1000"></CountTo>
+                  <count-to :start-val="0" :end-val="homeData.providentFund?.declaringTotal" :duration="1000" />
                 </div>
                 <div class="info-list-item">
                   <span>已申报(人)</span>
-                  <CountTo :start-val="0" :end-val="77" dutation="1000"></CountTo>
+                  <count-to :start-val="0" :end-val="homeData.providentFund?.declaredTotal" :duration="1000" />
                 </div>
               </div>
             </div>
@@ -172,46 +174,26 @@
         <div class="panel">
           <div class="panel-title">通知公告</div>
           <div class="information-list">
-            <div class="information-list-item">
-              <img src="@/assets/common/img.jpeg" alt="">
+            <div class="information-list-item" v-for="(item, index) in list" :key="index">
+              <img :src="item.icon" alt="">
               <div>
                 <p>
-                  <span class="col">朱继柳</span> 发布了
-                  第1期“传智大讲堂”互动讨论获奖名单公布
+                  {{ item.notice }}
                 </p>
-                <p>2018-07-21 15:21:38</p>
+                <p>{{ item.createTime }}</p>
               </div>
             </div>
-            <div class="information-list-item">
-              <img src="@/assets/common/img.jpeg" alt="">
-              <div>
-                <p>
-                  <span class="col">朱继柳</span> 发布了
-                  第1期“传智大讲堂”互动讨论获奖名单公布
-                </p>
-                <p>2018-07-21 15:21:38</p>
-              </div>
-            </div>
-            <div class="information-list-item">
-              <img src="@/assets/common/img.jpeg" alt="">
-              <div>
-                <p>
-                  <span class="col">朱继柳</span> 发布了
-                  第1期“传智大讲堂”互动讨论获奖名单公布
-                </p>
-                <p>2018-07-21 15:21:38</p>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import CountTo from 'vue-count-to'
 import { mapGetters } from 'vuex';
+import { getHomeData, getMessageList } from '@/api/home'
 export default {
   components: {
     CountTo
@@ -219,6 +201,28 @@ export default {
   // 计算属性
   computed: {
     ...mapGetters(['name', 'avatar', 'company', 'departmentName']) // 映射给了计算属性
+  },
+  data() {
+    return {
+      homeData: {}, //首页数据
+      list: [] // 消息
+    }
+  },
+  created() {
+    this.getHomeData()
+    this.getMessageList()
+  },
+  methods: {
+    async getHomeData() {
+      const res = await getHomeData()
+      // console.log(res);
+      this.homeData = res
+    },
+    async getMessageList() {
+      const res = await getMessageList()
+      this.list = res
+      console.log(res);
+    }
   }
 }
 </script>
