@@ -2,6 +2,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import { login } from '@/api/user'
 import { UserInfo } from '@/api/user'
 import { constantRoutes } from '@/router'
+import { resetRouter } from '@/router'
 
 const state = {
   token: getToken(), // 从缓存中读取默认token
@@ -45,6 +46,8 @@ const actions = {
   logout(context) {
     context.commit('setUserInfo', {}) //清理用户信息
     context.commit('delToken') //清理token
+    // 重置路由
+    resetRouter()
   }
 }
 

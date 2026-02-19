@@ -32,7 +32,7 @@ router.beforeEach(async (to, from, next) => {
         store.commit('user/setRoutes', filterRoutes)
         console.log(filterRoutes); // 存储到vuex响应式
         // 添加动态路由信息到路由表 并且 404路由要放到路由表的最后面
-        router.addRoutes([...filterRoutes], { path: '*', redirect: '/404', hidden: true })
+        router.addRoutes([...filterRoutes, { path: '*', redirect: '/404', hidden: true }])
         // router添加动态路由之后 需要转发一下
         next(to.path) // 目的是让路由拥有信息 router的已知缺陷
       } else {
