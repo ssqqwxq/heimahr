@@ -14,6 +14,7 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+import permission from './router/modules/permission'
 
 /**
  * If you don't want to use mock-server
@@ -34,6 +35,24 @@ Vue.use(ElementUI)
 // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+// 自定义指令 控制添加员工按钮权限
+Vue.directive('permission', {
+  // 会在指令作用的元素插入到页面完成以后触发
+  inserted(el, binding) {
+    // el 指令作用的元素的dom对象
+    // binding 是v-permission="表达式" 拿到的信息
+    console.log(el, binding);
+    const points = store.state.user.userInfo.roles.points
+    if (!points.includes(binding.value)) {
+      // 不存在就要删除或者禁用
+      el.remove() // 删除元素
+      // el.disabled = true
+      // 线上的权限数据和线下的代码进行对应
+    }
+
+  }
+})
 
 new Vue({
   el: '#app',
