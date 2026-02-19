@@ -1,23 +1,12 @@
 <template>
   <div :class="{ 'has-logo': showLogo }">
-    <logo v-if="showLogo"
-          :collapse="isCollapse" />
+    <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu :default-active="activeMenu"
-               :collapse="isCollapse"
-               :background-color="variables.menuBg"
-               :text-color="variables.menuText"
-               :unique-opened="false"
-               :active-text-color="variables.menuActiveText"
-               :collapse-transition="false"
-               mode="vertical">
-        <sidebar-item v-for="route in routes"
-                      :key="route.path"
-                      :item="route"
-                      :base-path="route.path" />
-        <!-- 给子组件传递父组件的地址 子组件实现拼接 如：父'/' 子/'dashboard'
-        子组件给它拼起来 '/dashboard' -->
-
+      <el-menu :default-active="activeMenu" :collapse="isCollapse" :background-color="variables.menuBg"
+        :text-color="variables.menuText" :unique-opened="false" :active-text-color="variables.menuActiveText"
+        :collapse-transition="false" mode="vertical">
+        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <!-- 有几个路由就渲染几个侧边栏菜单 -->
       </el-menu>
     </el-scrollbar>
   </div>
@@ -36,12 +25,12 @@ export default {
   // },
   computed: {
     ...mapGetters([
-      'sidebar'
+      'sidebar', 'routes'
     ]),
-    routes() {
-      // 获取全部的路由是数组 例如 [0.{path: '/login', hidden: true, component: ƒ}，{1}，{2}]
-      return this.$router.options.routes
-    },
+    // routes() {
+    //   // 获取全部的路由是数组 例如 [0.{path: '/login', hidden: true, component: ƒ}，{1}，{2}]
+    //   return this.$router.options.routes
+    // },
     // 获取当前地址 
     activeMenu() {
       const route = this.$route

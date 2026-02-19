@@ -1,40 +1,31 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened"
-               class="hamburger-container"
-               @toggleClick="toggleSideBar" />
+    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <el-dropdown class="avatar-container"
-                   trigger="click">
+      <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- 头像 -->
-          <img v-if="avatar"
-               :src="avatar"
-               class="user-avatar">
+          <img v-if="avatar" :src="avatar" class="user-avatar">
           <!-- 没有头像信息就默认显示用户名首字母(?若没有名字就不往下进行charAt方法) -->
-          <span v-else
-                class="username">{{ name?.charAt(0) }}</span>
+          <span v-else class="username">{{ name?.charAt(0) }}</span>
           <!-- 名称 -->
           <span class="name">{{ name }}</span>
           <!-- 图标 -->
           <i class="el-icon-setting" />
         </div>
-        <el-dropdown-menu slot="dropdown"
-                          class="user-dropdown">
+        <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
               首页
             </el-dropdown-item>
           </router-link>
-          <a target="_blank"
-             href="https://github.com/ssqqwxq/heimahr.git">
+          <a target="_blank" href="https://github.com/ssqqwxq/heimahr.git">
             <el-dropdown-item>项目地址</el-dropdown-item>
           </a>
-          <a target="_blank"
-             @click.prevent="updatePassword">
+          <a target="_blank" @click.prevent="updatePassword">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </a>
           <!-- native 是指给原生的标签绑定事件
@@ -46,37 +37,21 @@
       </el-dropdown>
     </div>
     <!-- 修改密码的对话窗 -->
-    <el-dialog width="500px"
-               title="修改密码"
-               :modal="false"
-               :visible.sync="showDialog">
+    <el-dialog width="500px" title="修改密码" :modal="false" :visible.sync="showDialog">
       <!-- 密码区域 show-password密码形式-->
-      <el-form ref="passForm"
-               label-width="120px"
-               :model="passForm"
-               :rules="rules">
-        <el-form-item label="旧密码"
-                      prop="oldPassword">
-          <el-input v-model="passForm.oldPassword"
-                    show-password
-                    size="small" />
+      <el-form ref="passForm" label-width="120px" :model="passForm" :rules="rules">
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input v-model="passForm.oldPassword" show-password size="small" />
         </el-form-item>
-        <el-form-item label="新密码"
-                      prop="newPassword">
-          <el-input v-model="passForm.newPassword"
-                    size="small" />
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="passForm.newPassword" size="small" />
         </el-form-item>
-        <el-form-item label="重复密码"
-                      prop="confirmPassword">
-          <el-input v-model="passForm.confirmPassword"
-                    size="small" />
+        <el-form-item label="重复密码" prop="confirmPassword">
+          <el-input v-model="passForm.confirmPassword" size="small" />
         </el-form-item>
         <el-form-item>
-          <el-button size="mini"
-                     type="primary"
-                     @click="btnOK">确认修改</el-button>
-          <el-button size="mini"
-                     @click="btnCancel">取消</el-button>
+          <el-button size="mini" type="primary" @click="btnOK">确认修改</el-button>
+          <el-button size="mini" @click="btnCancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

@@ -1,11 +1,12 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { login } from '@/api/user'
 import { UserInfo } from '@/api/user'
-import router from '@/router'
+import { constantRoutes } from '@/router'
 
 const state = {
   token: getToken(), // 从缓存中读取默认token
-  userInfo: '' // 用户基本信息
+  userInfo: '',// 用户基本信息
+  routes: constantRoutes // 静态路由的数组
 }
 
 const mutations = {
@@ -20,6 +21,10 @@ const mutations = {
   },
   setUserInfo(state, userinfoRes) {
     state.userInfo = userinfoRes
+  },
+  setRoutes(state, newRoutes) {
+    state.routes = [...constantRoutes, ...newRoutes] // 静态路由+动态路由
+    console.log(state.routes);
   }
 }
 
