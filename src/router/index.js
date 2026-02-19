@@ -63,9 +63,6 @@ export const constantRoutes = [
       meta: { title: '首页', icon: 'dashboard' }
     }]
   },
-
-  // * 匹配所有未被前面路由规则匹配到的路径
-  { path: '*', redirect: '/404', hidden: true }
 ]
 // 动态路由
 export const asyncRouters = [

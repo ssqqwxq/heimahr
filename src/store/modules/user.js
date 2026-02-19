@@ -30,10 +30,12 @@ const actions = {
     // 模拟登录成功 获得了token是123456，设置token
     context.commit('setToken', token)
   },
+  // 获取用户基本资料（包括权限）
   async getUserInfo(context) {
     const res = await UserInfo()
     // console.log(res)
     context.commit('setUserInfo', res)
+    return res
   },
   logout(context) {
     context.commit('setUserInfo', {}) //清理用户信息
